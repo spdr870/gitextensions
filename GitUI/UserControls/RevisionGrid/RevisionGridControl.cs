@@ -717,6 +717,8 @@ namespace GitUI
 
                 IndexWatcher.Reset();
 
+                SelectInitialRevision();
+
                 if (!AppSettings.ShowGitNotes && _refFilterOptions.HasFlag(RefFilterOptions.All | RefFilterOptions.Boundary))
                 {
                     _refFilterOptions |= RefFilterOptions.ShowGitNotes;
@@ -948,7 +950,6 @@ namespace GitUI
                         ////_gridView.Prune();
                         SetPage(_gridView);
                         _isRefreshingRevisions = false;
-                        SelectInitialRevision();
                         if (ShowBuildServerInfo)
                         {
                             await _buildServerWatcher.LaunchBuildServerInfoFetchOperationAsync();
@@ -1029,58 +1030,27 @@ namespace GitUI
             var filteredCurrentCheckout = _filteredCurrentCheckout;
             var selectedObjectIds = _selectedObjectIds ?? Array.Empty<ObjectId>();
 
-            // filter out all unavailable commits from LastSelectedRows.
-            selectedObjectIds = selectedObjectIds.Where(revision => FindRevisionIndex(revision) >= 0).ToArray();
+            if (selectedObjectIds.Count == 0 && InitialObjectId != null)
+            {
+                selectedObjectIds = new ObjectId[] { InitialObjectId };
+            }
 
-            if (selectedObjectIds.Count != 0)
+            if (selectedObjectIds.Count == 0 && filteredCurrentCheckout != null)
             {
-                _gridView.SelectedObjectIds = selectedObjectIds;
-                _selectedObjectIds = null;
+                selectedObjectIds = new ObjectId[] { filteredCurrentCheckout };
             }
-            else if (InitialObjectId != null)
+
+            if (selectedObjectIds.Count == 0)
             {
-                int index = SearchRevision(InitialObjectId);
-                if (index >= 0)
-                {
-                    SetSelectedIndex(index);
-                }
+                selectedObjectIds = new ObjectId[] { Module.GetCurrentCheckout() };
             }
-            else
-            {
-                SetSelectedRevision(filteredCurrentCheckout);
-            }
+
+            _gridView.ToBeSelectedObjectIds = selectedObjectIds.ToHashSet();
+            _selectedObjectIds = null;
 
             if (filteredCurrentCheckout != null && !_gridView.IsRevisionRelative(filteredCurrentCheckout))
             {
                 HighlightBranch(filteredCurrentCheckout);
-            }
-
-            return;
-
-            int SearchRevision(ObjectId objectId)
-            {
-                // Attempt to look up an item by its ID
-                if (_gridView.TryGetRevisionIndex(objectId) is int exactIndex)
-                {
-                    return exactIndex;
-                }
-
-                /* The code below is extremely slow, TryGetParents will return a huge list of parents
-                /// Not found, so search for its parents
-                if (TryGetParents(objectId, out var parentIds))
-                {
-                    foreach (var parentId in parentIds)
-                    {
-                        if (_gridView.TryGetRevisionIndex(parentId) is int parentIndex)
-                        {
-                            return parentIndex;
-                        }
-                    }
-                }
-                */
-
-                // Not found...
-                return -1;
             }
         }
 
