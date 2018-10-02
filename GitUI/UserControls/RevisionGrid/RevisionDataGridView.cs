@@ -180,6 +180,15 @@ namespace GitUI.UserControls.RevisionGrid
             }
         }
 
+        public HashSet<ObjectId> ToBeSelectedObjectIds { get; set; } = new HashSet<ObjectId>();
+
+        public HashSet<int> ToBeSelectedRowIndexes { get; set; } = new HashSet<int>();
+
+        public bool HasSelection()
+        {
+            return ToBeSelectedObjectIds.Any() || ToBeSelectedRowIndexes.Any() || SelectedRows.Count > 0;
+        }
+
         [CanBeNull]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2002:DoNotLockOnObjectsWithWeakIdentity")]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
@@ -322,6 +331,15 @@ namespace GitUI.UserControls.RevisionGrid
         {
             _graphModel.Add(revision, types);
 
+            if (ToBeSelectedObjectIds.Contains(revision.ObjectId))
+            {
+                lock (_backgroundThread)
+                {
+                    ToBeSelectedObjectIds.Remove(revision.ObjectId);
+                    ToBeSelectedRowIndexes.Add(_graphModel.Count - 1);
+                }
+            }
+
             UpdateVisibleRowRange();
         }
 
@@ -430,6 +448,21 @@ namespace GitUI.UserControls.RevisionGrid
                     else
                     {
                         RowCount = count;
+                    }
+
+                    foreach (int toBeSelectedRowIndex in ToBeSelectedRowIndexes)
+                    {
+                        if (count > toBeSelectedRowIndex)
+                        {
+                            Rows[toBeSelectedRowIndex].Selected = true;
+                            ToBeSelectedRowIndexes.Remove(toBeSelectedRowIndex);
+                            if (CurrentCell == null)
+                            {
+                                CurrentCell = Rows[toBeSelectedRowIndex].Cells[1];
+                            }
+
+                            break;
+                        }
                     }
                 }
                 finally
