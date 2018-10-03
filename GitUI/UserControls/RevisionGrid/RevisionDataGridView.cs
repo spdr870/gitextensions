@@ -542,10 +542,7 @@ namespace GitUI.UserControls.RevisionGrid
                         Debug.WriteLine("Cached item FAILED {0}", rowIndex);
                         lock (_backgroundThread)
                         {
-                            // Something went wrong, reset the counters
-                            _backgroundScrollTo = _graphModel.CachedCount;
-                            _graphDataCount = _graphModel.CachedCount;
-                            rowIndex = _graphModel.CachedCount; // Needed for 'updaterow'
+                            _backgroundScrollTo = rowIndex;
                         }
 
                         break;

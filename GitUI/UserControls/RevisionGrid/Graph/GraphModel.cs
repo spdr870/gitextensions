@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -13,12 +14,12 @@ namespace GitUI.UserControls.RevisionGrid.Graph
     {
         public event Action Updated;
 
-        private readonly List<Junction> _junctions = new List<Junction>();
+        private readonly SynchronizedCollection<Junction> _junctions = new SynchronizedCollection<Junction>();
         private readonly ActiveLaneRow _currentRow = new ActiveLaneRow();
-        private readonly List<LaneJunctionDetail> _laneNodes = new List<LaneJunctionDetail>();
-        private readonly List<ILaneRow> _laneRows = new List<ILaneRow>();
-        private readonly Dictionary<ObjectId, Node> _nodeByObjectId = new Dictionary<ObjectId, Node>();
-        private readonly List<Node> _nodes = new List<Node>();
+        private readonly SynchronizedCollection<LaneJunctionDetail> _laneNodes = new SynchronizedCollection<LaneJunctionDetail>();
+        private readonly SynchronizedCollection<ILaneRow> _laneRows = new SynchronizedCollection<ILaneRow>();
+        private readonly ConcurrentDictionary<ObjectId, Node> _nodeByObjectId = new ConcurrentDictionary<ObjectId, Node>();
+        private readonly SynchronizedCollection<Node> _nodes = new SynchronizedCollection<Node>();
 
         private int _processedNodes;
         public int Count { get; private set; }
@@ -288,7 +289,17 @@ namespace GitUI.UserControls.RevisionGrid.Graph
                 if (!_nodeByObjectId.TryGetValue(objectId, out n))
                 {
                     n = new Node(objectId);
-                    _nodeByObjectId.Add(objectId, n);
+                    if (!_nodeByObjectId.TryAdd(objectId, n))
+                    {
+                        if (Debugger.IsAttached)
+                        {
+                            Debugger.Break();
+                        }
+
+                        Thread.Sleep(1);
+                        _nodeByObjectId.TryAdd(objectId, n);
+                    }
+
                     return false;
                 }
 
@@ -746,7 +757,15 @@ namespace GitUI.UserControls.RevisionGrid.Graph
             // Remove all nodes that don't have a value associated with them.
             foreach (var node in nodesToRemove)
             {
-                _nodeByObjectId.Remove(node.ObjectId);
+                if (!_nodeByObjectId.TryRemove(node.ObjectId, out Node removedValue))
+                {
+                    if (Debugger.IsAttached)
+                    {
+                        Debugger.Break();
+                    }
+
+                    _nodeByObjectId.TryRemove(node.ObjectId, out removedValue);
+                }
 
                 // This guy should have been at the end of some junctions
                 foreach (var descendant in node.Descendants)
