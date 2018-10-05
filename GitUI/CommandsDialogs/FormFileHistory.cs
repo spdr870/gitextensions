@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -70,8 +71,8 @@ namespace GitUI.CommandsDialogs
                     Images =
                     {
                         Images.CommitSummary,
-                        Images.ViewFile,
                         Images.Diff,
+                        Images.ViewFile,
                         Images.Blame
                     }
                 };
@@ -116,8 +117,8 @@ namespace GitUI.CommandsDialogs
             if (blameTabExists)
             {
                 ignoreWhitespaceToolStripMenuItem.Checked = AppSettings.IgnoreWhitespaceOnBlame;
-                detectMoveAndCopyInAllFilesToolStripMenuItem.Checked = AppSettings.DetectCopyInFileOnBlame;
-                detectMoveAndCopyInThisFileToolStripMenuItem.Checked = AppSettings.DetectCopyInAllOnBlame;
+                detectMoveAndCopyInAllFilesToolStripMenuItem.Checked = AppSettings.DetectCopyInAllOnBlame;
+                detectMoveAndCopyInThisFileToolStripMenuItem.Checked = AppSettings.DetectCopyInFileOnBlame;
             }
 
             if (filterByRevision && revision?.Guid != null)
@@ -328,6 +329,36 @@ namespace GitUI.CommandsDialogs
             }
 
             SetTitle(fileName);
+
+            if (revision.IsArtificial)
+            {
+                tabControl1.SelectedTab = DiffTab;
+
+                CommitInfoTabPage.Parent = null;
+                BlameTab.Parent = null;
+                ViewTab.Parent = null;
+            }
+            else
+            {
+                if (CommitInfoTabPage.Parent == null)
+                {
+                    tabControl1.TabPages.Insert(0, CommitInfoTabPage);
+                }
+
+                if (ViewTab.Parent == null)
+                {
+                    var index = tabControl1.TabPages.IndexOf(DiffTab);
+                    Debug.Assert(index != -1, "TabControl should contain diff tab page");
+                    tabControl1.TabPages.Insert(index + 1, ViewTab);
+                }
+
+                if (BlameTab.Parent == null)
+                {
+                    var index = tabControl1.TabPages.IndexOf(ViewTab);
+                    Debug.Assert(index != -1, "TabControl should contain view tab page");
+                    tabControl1.TabPages.Insert(index + 1, BlameTab);
+                }
+            }
 
             if (tabControl1.SelectedTab == BlameTab)
             {
@@ -558,15 +589,15 @@ namespace GitUI.CommandsDialogs
 
         private void detectMoveAndCopyInAllFilesToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            AppSettings.DetectCopyInFileOnBlame = !AppSettings.DetectCopyInFileOnBlame;
-            detectMoveAndCopyInAllFilesToolStripMenuItem.Checked = AppSettings.DetectCopyInFileOnBlame;
+            AppSettings.DetectCopyInAllOnBlame = !AppSettings.DetectCopyInAllOnBlame;
+            detectMoveAndCopyInAllFilesToolStripMenuItem.Checked = AppSettings.DetectCopyInAllOnBlame;
             UpdateSelectedFileViewers(true);
         }
 
         private void detectMoveAndCopyInThisFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            AppSettings.DetectCopyInAllOnBlame = !AppSettings.DetectCopyInAllOnBlame;
-            detectMoveAndCopyInThisFileToolStripMenuItem.Checked = AppSettings.DetectCopyInAllOnBlame;
+            AppSettings.DetectCopyInFileOnBlame = !AppSettings.DetectCopyInFileOnBlame;
+            detectMoveAndCopyInThisFileToolStripMenuItem.Checked = AppSettings.DetectCopyInFileOnBlame;
             UpdateSelectedFileViewers(true);
         }
 

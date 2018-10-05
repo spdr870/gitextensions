@@ -45,6 +45,7 @@ namespace GitUI
             InitializeComponent();
             InitialiseFiltering();
             CreateOpenSubmoduleMenuItem();
+            lblSplitter.Height = DpiUtil.Scale(1);
             InitializeComplete();
             FilterVisible = false;
 
@@ -52,6 +53,7 @@ namespace GitUI
 
             FileStatusListView.SmallImageList = CreateImageList();
             FileStatusListView.LargeImageList = CreateImageList();
+            FileStatusListView.AllowCollapseGroups = true;
 
             HandleVisibility_NoFilesLabel_FilterComboBox(filesPresent: true);
             Controls.SetChildIndex(NoFiles, 0);
@@ -926,8 +928,7 @@ namespace GitUI
                 }
             }
 
-            FileStatusListView_SizeChanged(null, null);
-            FileStatusListView.SetGroupState(ListViewGroupState.Collapsible);
+            FileStatusListView.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
             FileStatusListView.EndUpdate();
 
             return;
@@ -1051,18 +1052,6 @@ namespace GitUI
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         [Browsable(false)]
         public GitRevision Revision { get; set; }
-
-        private void FileStatusListView_SizeChanged(object sender, EventArgs e)
-        {
-            NoFiles.Size = new Size(Size.Width - 10, Size.Height - 10);
-            Refresh();
-            FileStatusListView.BeginUpdate();
-
-            FileStatusListView.AutoResizeColumn(
-                0,
-                ColumnHeaderAutoResizeStyle.HeaderSize);
-            FileStatusListView.EndUpdate();
-        }
 
         private void FileStatusListView_KeyDown(object sender, KeyEventArgs e)
         {

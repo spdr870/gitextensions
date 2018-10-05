@@ -685,7 +685,7 @@ namespace GitUI.CommandsDialogs
             using (WaitCursorScope.Enter())
             {
                 // check for updates
-                if (AppSettings.LastUpdateCheck.AddDays(7) < DateTime.Now)
+                if (AppSettings.CheckForUpdates && AppSettings.LastUpdateCheck.AddDays(7) < DateTime.Now)
                 {
                     AppSettings.LastUpdateCheck = DateTime.Now;
                     var updateForm = new FormUpdates(AppSettings.AppVersion);
@@ -1453,6 +1453,7 @@ namespace GitUI.CommandsDialogs
 
         private void RefreshButtonClick(object sender, EventArgs e)
         {
+            _gitStatusMonitor.RequestRefresh();
             RefreshRevisions();
         }
 
@@ -3028,6 +3029,11 @@ namespace GitUI.CommandsDialogs
 
         private void toolStripBranchFilterComboBox_Click(object sender, EventArgs e)
         {
+            if (toolStripBranchFilterComboBox.Items.Count == 0)
+            {
+                return;
+            }
+
             toolStripBranchFilterComboBox.DroppedDown = true;
         }
 
