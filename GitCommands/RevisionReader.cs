@@ -99,8 +99,8 @@ namespace GitCommands
                 /* Author email    */ "%aE%n" +
                 /* Committer name  */ "%cN%n" +
                 /* Committer email */ "%cE%n" +
-                /* Commit subject  */ "%s%n%n"; // +
-                /////* Commit body     */ "%b";
+                /* Commit subject  */ "%s%n%n" +
+                /* Commit body     */ "%b";
 
             var arguments = BuildArguments();
 

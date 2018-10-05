@@ -1227,7 +1227,7 @@ namespace GitUI
             {
                 case MouseButtons.XButton1: NavigateBackward(); break;
                 case MouseButtons.XButton2: NavigateForward(); break;
-                /*case MouseButtons.Left when _maximizedColumn != null && _lastVisibleResizableColumn != null:
+                case MouseButtons.Left when _maximizedColumn != null && _lastVisibleResizableColumn != null:
                     // make resizing of the maximized column work and restore the settings afterwards
                     void OnGridViewMouseCaptureChanged(object ignoredSender, EventArgs ignoredArgs)
                     {
@@ -1239,7 +1239,7 @@ namespace GitUI
                     _gridView.MouseCaptureChanged += OnGridViewMouseCaptureChanged;
                     _maximizedColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
                     _lastVisibleResizableColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-                    break;*/
+                    break;
             }
         }
 
