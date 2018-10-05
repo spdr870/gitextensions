@@ -583,7 +583,7 @@ namespace GitUI.UserControls.RevisionGrid
         {
             var oldRange = _visibleRowRange;
             var fromIndex = Math.Max(0, FirstDisplayedScrollingRowIndex);
-            var toIndex = _rowHeight > 0 ? fromIndex + (Height / _rowHeight) + 1/*Add 1 for rounding*/ : fromIndex;
+            var toIndex = _rowHeight > 0 ? fromIndex + (Height / _rowHeight) + 5/*Add 5 for rounding*/ : fromIndex;
 
             if (fromIndex >= _graphModel.Count)
             {
