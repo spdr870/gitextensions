@@ -52,6 +52,7 @@ namespace GitUI
         private readonly TranslationString _noRevisionFoundError = new TranslationString("No revision found.");
         private readonly TranslationString _baseForCompareNotSelectedError = new TranslationString("Base commit for compare is not selected.");
         private readonly TranslationString _strError = new TranslationString("Error");
+        private readonly TranslationString _strLoading = new TranslationString("Loading");
         private readonly TranslationString _rebaseConfirmTitle = new TranslationString("Rebase Confirmation");
         private readonly TranslationString _rebaseBranch = new TranslationString("Rebase branch.");
         private readonly TranslationString _rebaseBranchInteractive = new TranslationString("Rebase branch interactively.");
@@ -60,7 +61,7 @@ namespace GitUI
 
         private readonly FormRevisionFilter _revisionFilter = new FormRevisionFilter();
         private readonly NavigationHistory _navigationHistory = new NavigationHistory();
-        private readonly LoadingControl _loadingImage;
+        private readonly Control _loadingControl;
         private readonly RevisionGridToolTipProvider _toolTipProvider;
         private readonly QuickSearchProvider _quickSearchProvider;
         private readonly ParentChildNavigationHistory _parentChildNavigationHistory;
@@ -102,7 +103,6 @@ namespace GitUI
         /// Same as <see cref="CurrentCheckout"/> except <c>null</c> until the associated revision is loaded.
         /// </summary>
         [CanBeNull] private ObjectId _filteredCurrentCheckout;
-        [CanBeNull] private IReadOnlyList<ObjectId> _currentCheckoutParents;
         private bool _settingsLoaded;
 
         // NOTE internal properties aren't serialised by the WinForms designer
@@ -131,7 +131,20 @@ namespace GitUI
             InitializeComponent();
             InitializeComplete();
 
-            _loadingImage = new LoadingControl();
+            _loadingControl = new Label
+            {
+                Location = new Point(0, 0),
+                Dock = DockStyle.Right,
+                Padding = new Padding(7, 5, 5, 5),
+                BorderStyle = BorderStyle.None,
+                ForeColor = SystemColors.InfoText,
+                BackColor = SystemColors.Info,
+                Font = new Font(FontFamily.GenericSansSerif, 11, FontStyle.Bold),
+                Visible = false,
+                UseMnemonic = false,
+                AutoSize = true,
+                Text = _strLoading.Text
+            };
 
             // Delay raising the SelectionChanged event for a barely noticeable period to throttle
             // rapid changes, for example by holding the down arrow key in the revision grid.
@@ -223,9 +236,20 @@ namespace GitUI
 
         private void SetPage(Control content)
         {
-            _loadingImage.IsAnimating = ReferenceEquals(content, _loadingImage);
-            Controls.Clear();
-            Controls.Add(content);
+            ShowLoading(false);
+            for (int i = Controls.Count - 1; i >= 0; i--)
+            {
+                Control oldControl = Controls[i];
+                if (!oldControl.Equals(content))
+                {
+                    Controls.RemoveAt(i);
+                }
+            }
+
+            if (Controls.Count == 0)
+            {
+                Controls.Add(content);
+            }
         }
 
         internal int DrawColumnText(DataGridViewCellPaintingEventArgs e, string text, Font font, Color color, Rectangle bounds, bool useEllipsis = true)
@@ -477,7 +501,7 @@ namespace GitUI
         protected override void OnCreateControl()
         {
             base.OnCreateControl();
-            SetPage(_loadingImage);
+            ShowLoading();
         }
 
         public new void Load()
@@ -667,11 +691,18 @@ namespace GitUI
             return false;
         }
 
+        private void ShowLoading(bool show = true)
+        {
+            _loadingControl.Visible = show;
+            Controls.Add(_loadingControl);
+            _loadingControl.BringToFront();
+        }
+
         public void ForceRefreshRevisions()
         {
             ThreadHelper.AssertOnUIThread();
 
-            SetPage(_loadingImage);
+            ShowLoading();
 
             var revisionCount = 0;
 
@@ -706,7 +737,6 @@ namespace GitUI
 
                 CurrentCheckout = newCurrentCheckout;
                 _filteredCurrentCheckout = null;
-                _currentCheckoutParents = null;
                 _isRefreshingRevisions = true;
                 base.Refresh();
 
@@ -838,15 +868,6 @@ namespace GitUI
                     {
                         _filteredCurrentCheckout = CurrentCheckout;
                     }
-                    else
-                    {
-                        if (_currentCheckoutParents == null)
-                        {
-                            TryGetParents(CurrentCheckout, out _currentCheckoutParents);
-                        }
-
-                        _filteredCurrentCheckout = _currentCheckoutParents?.FirstOrDefault(parent => parent == revision.ObjectId);
-                    }
                 }
 
                 var isCurrentCheckout = revision.ObjectId == _filteredCurrentCheckout;
@@ -949,7 +970,6 @@ namespace GitUI
                     ThreadHelper.JoinableTaskFactory.RunAsync(async () =>
                     {
                         await this.SwitchToMainThreadAsync();
-                        _gridView.Prune();
                         SetPage(_gridView);
                         _isRefreshingRevisions = false;
                         SelectInitialRevision();
@@ -1093,7 +1113,7 @@ namespace GitUI
             var args = new ArgumentBuilder
             {
                 "rev-list",
-                { AppSettings.OrderRevisionByDate, "--date-order", "--topo-order" },
+                { AppSettings.OrderRevisionByDate, "--date-order" },
                 { AppSettings.MaxRevisionGraphCommits > 0, $"--max-count={AppSettings.MaxRevisionGraphCommits}" },
                 objectId
             };
