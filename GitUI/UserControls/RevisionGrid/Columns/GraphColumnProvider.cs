@@ -477,7 +477,7 @@ namespace GitUI.UserControls.RevisionGrid.Columns
                     var laneRow = _graphModel.GetLaneRow(index);
                     if (laneRow != null)
                     {
-                        laneCount = Math.Max(laneRow.Count, laneCount);
+                        laneCount = Math.Max(Math.Max(laneRow.Count, laneRow.NodeLane + 1), laneCount);
                     }
                 }
             }
