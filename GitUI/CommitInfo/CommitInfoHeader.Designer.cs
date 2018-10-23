@@ -44,10 +44,10 @@
             pnlAvatar.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             pnlAvatar.Controls.Add(this.avatarControl);
             pnlAvatar.Location = new System.Drawing.Point(2, 2);
-            pnlAvatar.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            pnlAvatar.Margin = new System.Windows.Forms.Padding(2);
             pnlAvatar.Name = "pnlAvatar";
             pnlAvatar.Padding = new System.Windows.Forms.Padding(0, 0, 8, 0);
-            pnlAvatar.Size = new System.Drawing.Size(56, 48);
+            pnlAvatar.Size = new System.Drawing.Size(104, 96);
             pnlAvatar.TabIndex = 0;
             // 
             // avatarControl
@@ -57,7 +57,7 @@
             this.avatarControl.Location = new System.Drawing.Point(0, 0);
             this.avatarControl.Margin = new System.Windows.Forms.Padding(0);
             this.avatarControl.Name = "avatarControl";
-            this.avatarControl.Size = new System.Drawing.Size(48, 48);
+            this.avatarControl.Size = new System.Drawing.Size(96, 96);
             this.avatarControl.TabIndex = 0;
             // 
             // tableLayoutPanel1
@@ -70,12 +70,12 @@
             tableLayoutPanel1.Controls.Add(pnlAvatar, 0, 0);
             tableLayoutPanel1.Controls.Add(this.rtbRevisionHeader, 1, 0);
             tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
-            tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            tableLayoutPanel1.Location = new System.Drawing.Point(4, 4);
+            tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(2);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
             tableLayoutPanel1.RowCount = 1;
             tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            tableLayoutPanel1.Size = new System.Drawing.Size(216, 52);
+            tableLayoutPanel1.Size = new System.Drawing.Size(264, 100);
             tableLayoutPanel1.TabIndex = 0;
             // 
             // rtbRevisionHeader
@@ -83,12 +83,12 @@
             this.rtbRevisionHeader.BackColor = System.Drawing.SystemColors.Window;
             this.rtbRevisionHeader.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.rtbRevisionHeader.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.rtbRevisionHeader.Location = new System.Drawing.Point(60, 0);
+            this.rtbRevisionHeader.Location = new System.Drawing.Point(108, 0);
             this.rtbRevisionHeader.Margin = new System.Windows.Forms.Padding(0);
             this.rtbRevisionHeader.Name = "rtbRevisionHeader";
             this.rtbRevisionHeader.ReadOnly = true;
             this.rtbRevisionHeader.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.None;
-            this.rtbRevisionHeader.Size = new System.Drawing.Size(156, 52);
+            this.rtbRevisionHeader.Size = new System.Drawing.Size(156, 100);
             this.rtbRevisionHeader.TabIndex = 0;
             this.rtbRevisionHeader.Text = "";
             this.rtbRevisionHeader.ContentsResized += new System.Windows.Forms.ContentsResizedEventHandler(this.rtbRevisionHeader_ContentsResized);
@@ -104,9 +104,9 @@
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.Controls.Add(tableLayoutPanel1);
             this.DoubleBuffered = true;
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.Name = "CommitInfoHeader";
-            this.Size = new System.Drawing.Size(216, 52);
+            this.Padding = new System.Windows.Forms.Padding(4);
+            this.Size = new System.Drawing.Size(272, 108);
             pnlAvatar.ResumeLayout(false);
             pnlAvatar.PerformLayout();
             tableLayoutPanel1.ResumeLayout(false);

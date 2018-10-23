@@ -190,11 +190,9 @@
             this.commitInfoHeader.AutoSize = true;
             this.commitInfoHeader.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.commitInfoHeader.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.commitInfoHeader.Location = new System.Drawing.Point(15, 5);
-            this.commitInfoHeader.Margin = new System.Windows.Forms.Padding(1);
+            this.commitInfoHeader.Location = new System.Drawing.Point(17, 7);
             this.commitInfoHeader.Name = "commitInfoHeader";
-            this.commitInfoHeader.Padding = new System.Windows.Forms.Padding(0, 0, 0, 4);
-            this.commitInfoHeader.Size = new System.Drawing.Size(544, 104);
+            this.commitInfoHeader.Size = new System.Drawing.Size(540, 100);
             this.commitInfoHeader.TabIndex = 0;
             // 
             // CommitInfo
