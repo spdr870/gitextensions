@@ -2962,9 +2962,6 @@ namespace GitUI.CommandsDialogs
             RevisionsSplitContainer.SuspendLayout();
 
             var commitInfoPosition = AppSettings.CommitInfoPosition;
-
-            RevisionInfo.SetAvatarPosition(right: commitInfoPosition == CommitInfoPosition.RightwardFromList);
-
             if (commitInfoPosition == CommitInfoPosition.BelowList)
             {
                 CommitInfoTabControl.InsertIfNotExists(0, CommitInfoTabPage);

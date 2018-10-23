@@ -52,7 +52,7 @@ namespace GitUI.Blame
             BlameFile.RequestDiffView += ActiveTextAreaControlDoubleClick;
             BlameFile.MouseMove += BlameFile_MouseMove;
 
-            CommitInfo.CommandClick += commitInfo_CommandClick;
+            CommitInfo.CommandClicked += commitInfo_CommandClick;
         }
 
         public void LoadBlame(GitRevision revision, [CanBeNull] IReadOnlyList<ObjectId> children, string fileName, RevisionGridControl revGrid, Control controlToMask, Encoding encoding, int? initialLine = null, bool force = false)
