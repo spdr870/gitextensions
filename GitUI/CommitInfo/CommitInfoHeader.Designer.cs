@@ -44,7 +44,7 @@
             pnlAvatar.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             pnlAvatar.Controls.Add(this.avatarControl);
             pnlAvatar.Location = new System.Drawing.Point(2, 2);
-            pnlAvatar.Margin = new System.Windows.Forms.Padding(2);
+            pnlAvatar.Margin = new System.Windows.Forms.Padding(0, 2, 2, 2);
             pnlAvatar.Name = "pnlAvatar";
             pnlAvatar.Padding = new System.Windows.Forms.Padding(0, 0, 8, 0);
             pnlAvatar.Size = new System.Drawing.Size(104, 96);
@@ -71,7 +71,7 @@
             tableLayoutPanel1.Controls.Add(this.rtbRevisionHeader, 1, 0);
             tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             tableLayoutPanel1.Location = new System.Drawing.Point(4, 4);
-            tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(2);
+            tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(0, 2, 2, 2);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
             tableLayoutPanel1.RowCount = 1;
             tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
@@ -105,7 +105,7 @@
             this.Controls.Add(tableLayoutPanel1);
             this.DoubleBuffered = true;
             this.Name = "CommitInfoHeader";
-            this.Padding = new System.Windows.Forms.Padding(4);
+            this.Padding = new System.Windows.Forms.Padding(0, 4, 4, 4);
             this.Size = new System.Drawing.Size(272, 108);
             pnlAvatar.ResumeLayout(false);
             pnlAvatar.PerformLayout();

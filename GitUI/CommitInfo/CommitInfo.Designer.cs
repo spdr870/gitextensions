@@ -52,12 +52,13 @@
             // 
             // lblSeparator
             // 
-            lblSeparator.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            ////lblSeparator.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            lblSeparator.BackColor = System.Drawing.Color.LightGray;
             lblSeparator.Dock = System.Windows.Forms.DockStyle.Fill;
             lblSeparator.Location = new System.Drawing.Point(16, 110);
             lblSeparator.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             lblSeparator.Name = "lblSeparator";
-            lblSeparator.Size = new System.Drawing.Size(542, 1);
+            lblSeparator.Size = new System.Drawing.Size(542, 8);
             lblSeparator.TabIndex = 1;
             // 
             // tableLayout
@@ -80,7 +81,7 @@
             tableLayout.RowCount = 4;
             tableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle());
             tableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            tableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 1F));
+            tableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 8F));
             tableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             tableLayout.Size = new System.Drawing.Size(564, 208);
             tableLayout.TabIndex = 0;
@@ -190,7 +191,7 @@
             this.commitInfoHeader.AutoSize = true;
             this.commitInfoHeader.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.commitInfoHeader.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.commitInfoHeader.Location = new System.Drawing.Point(17, 7);
+            this.commitInfoHeader.Location = new System.Drawing.Point(0, 7);
             this.commitInfoHeader.Name = "commitInfoHeader";
             this.commitInfoHeader.Size = new System.Drawing.Size(540, 100);
             this.commitInfoHeader.TabIndex = 0;
