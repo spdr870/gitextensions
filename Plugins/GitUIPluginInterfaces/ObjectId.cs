@@ -566,7 +566,7 @@ namespace GitUIPluginInterfaces
         public override bool Equals(object obj) => obj is ObjectId id && Equals(id);
 
         /// <inheritdoc />
-        public override int GetHashCode() => unchecked((int)_i2);
+        public override int GetHashCode() => unchecked((int)_i3);
 
         public static bool operator ==(ObjectId left, ObjectId right) => Equals(left, right);
         public static bool operator !=(ObjectId left, ObjectId right) => !Equals(left, right);

@@ -96,7 +96,12 @@ namespace GitUI.UserControls.RevisionGrid.Graph
             // Generate a LaneColor used for rendering
             if (Parents.Any())
             {
-                parent.LaneColor = parent.Score;
+                parent.LaneColor = RevisionGraphLaneColor.GetLaneColor(parent.Objectid.GetHashCode());
+
+                if (LaneColor == parent.LaneColor)
+                {
+                    parent.LaneColor += 1;
+                }
             }
             else
             {

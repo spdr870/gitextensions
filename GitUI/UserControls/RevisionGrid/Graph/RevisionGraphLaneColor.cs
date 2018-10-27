@@ -39,5 +39,10 @@ namespace GitUI.UserControls.RevisionGrid.Graph
         {
             return PresetGraphBrushes[Math.Abs(laneColor) % PresetGraphBrushes.Count];
         }
+
+        public static int GetLaneColor(int seed)
+        {
+            return Math.Abs(seed) % PresetGraphBrushes.Count;
+        }
     }
 }
