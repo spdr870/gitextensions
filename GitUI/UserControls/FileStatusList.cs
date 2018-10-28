@@ -779,6 +779,7 @@ namespace GitUI
             FileStatusListView.Items.Clear();
 
             var truncateMethod = AppSettings.TruncatePathMethod;
+            var clientSizeWidth = truncateMethod == TruncatePathMethod.Compact || truncateMethod == TruncatePathMethod.TrimStart;
             var fileNameOnlyMode = truncateMethod == TruncatePathMethod.FileNameOnly;
 
             var list = new List<ListViewItem>();
@@ -814,7 +815,30 @@ namespace GitUI
                         continue;
                     }
 
-                    var listItem = new ListViewItem(string.Empty, group)
+                    string text;
+                    if (clientSizeWidth)
+                    {
+                        // list-item has client width, so we don't need horizontal scrollbar (which is determined by this text width)
+                        text = string.Empty;
+                    }
+                    else if (fileNameOnlyMode)
+                    {
+                        // we need to put filename in list-item text -> then horizontal scrollbar
+                        // will have proper width (by the longest filename, and not all path)
+                        text = PathFormatter.FormatTextForFileNameOnly(item.Name, item.OldName);
+                        if (!(_filter?.IsMatch(text) ?? true))
+                        {
+                            continue;
+                        }
+
+                        text = AppendItemSubmoduleStatus(text, item);
+                    }
+                    else
+                    {
+                        text = item.Name;
+                    }
+
+                    var listItem = new ListViewItem(text, group)
                     {
                         ImageIndex = GetItemImageIndex(item)
                     };
@@ -841,18 +865,12 @@ namespace GitUI
 
                     listItem.Tag = item;
 
-                    var (image, text) = GetDisplayElements(listItem, pathFormatter, FileStatusListView.ClientSize.Width);
-                    if (image == default && text == default)
+                    var gitItemStatus = listItem.Tag<GitItemStatus>();
+                    if (fileNameOnlyMode && !(_filter?.IsMatch(gitItemStatus.Name) ?? true) && !(_filter?.IsMatch(gitItemStatus.OldName) ?? true))
                     {
                         continue;
                     }
 
-                    if (fileNameOnlyMode && !(_filter?.IsMatch(text) ?? true))
-                    {
-                        continue;
-                    }
-
-                    listItem.Text = text;
                     list.Add(listItem);
                 }
             }
@@ -999,16 +1017,6 @@ namespace GitUI
             if (!FileStatusListView.IsHandleCreated)
             {
                 return;
-            }
-
-            var formatter = new PathFormatter(FileStatusListView.CreateGraphics(), FileStatusListView.Font);
-            foreach (ListViewItem item in FileStatusListView.Items)
-            {
-                var (_, text) = GetDisplayElements(item, formatter, FileStatusListView.ClientSize.Width);
-
-                // let FileStatusListView know the actual displayed text
-                // in order to properly display horizontal scroll
-                item.Text = text;
             }
 
             UpdateColumnWidth();
