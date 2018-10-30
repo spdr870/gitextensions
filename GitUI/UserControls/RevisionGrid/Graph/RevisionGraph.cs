@@ -20,12 +20,12 @@ namespace GitUI.UserControls.RevisionGrid.Graph
         // The nodecache is an ordered list with the nodes. This is used to be able to draw commits before the graph is completed.
         private List<RevisionGraphRevision> _orderedNodesCache = null;
         private bool _reorder = true;
-        private int _orderedUntillScore = -1;
+        private int _orderedUntilScore = -1;
 
         // The orderedrowcache contains the rows with the segments stored in lanes.
         private List<RevisionGraphRow> _orderedRowCache = null;
         private bool _rebuild = true;
-        private int _buildUntillScore = -1;
+        private int _buildUntilScore = -1;
 
         // When the cache is updated, this action can be used to invalidate the UI
         public event Action Updated;
@@ -63,7 +63,7 @@ namespace GitUI.UserControls.RevisionGrid.Graph
                 _orderedNodesCache = _nodes.OrderBy(n => n.Score).ToList();
                 if (_orderedNodesCache.Count > 0)
                 {
-                    _orderedUntillScore = _orderedNodesCache.Last().Score;
+                    _orderedUntilScore = _orderedNodesCache.Last().Score;
                 }
 
                 _reorder = false;
@@ -122,7 +122,7 @@ namespace GitUI.UserControls.RevisionGrid.Graph
                     }
 
                     _orderedRowCache.Add(new RevisionGraphRow(revision, segments));
-                    _buildUntillScore = revision.Score;
+                    _buildUntilScore = revision.Score;
                     nextIndex++;
                 }
 
@@ -290,12 +290,12 @@ namespace GitUI.UserControls.RevisionGrid.Graph
 
         private void ResetCacheIfNeeded(RevisionGraphRevision revisionGraphRevision)
         {
-            if (revisionGraphRevision.Score <= _orderedUntillScore)
+            if (revisionGraphRevision.Score <= _orderedUntilScore)
             {
                 _reorder = true;
             }
 
-            if (revisionGraphRevision.Score <= _buildUntillScore)
+            if (revisionGraphRevision.Score <= _buildUntilScore)
             {
                 _rebuild = true;
             }
