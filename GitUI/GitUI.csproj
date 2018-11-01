@@ -397,6 +397,7 @@
     <Compile Include="UserControls\RevisionGrid\Columns\RevisionGraphColumnProvider.cs" />
     <Compile Include="UserControls\RevisionGrid\Columns\MultilineIndicator.cs" />
     <Compile Include="UserControls\HslColor.cs" />
+    <Compile Include="UserControls\RevisionGrid\Graph\OrderedRowCacheBuilder.cs" />
     <Compile Include="UserControls\RevisionGrid\Graph\RevisionGraph.cs" />
     <Compile Include="UserControls\RevisionGrid\Graph\RevisionGraphLaneColor.cs" />
     <Compile Include="UserControls\RevisionGrid\Graph\RevisionGraphRevision.cs" />
