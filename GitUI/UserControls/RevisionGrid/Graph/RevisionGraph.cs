@@ -150,12 +150,8 @@ namespace GitUI.UserControls.RevisionGrid.Graph
 
         public bool IsRowRelative(int row)
         {
-            if (_orderedNodesCache == null || _orderedNodesCache.Count < row)
-            {
-                return false;
-            }
-
-            return _orderedNodesCache[row].IsRelative;
+            var node = GetNodeForRow(row);
+            return node != null && node.IsRelative;
         }
 
         public bool IsRevisionRelative(ObjectId objectId)
@@ -189,22 +185,26 @@ namespace GitUI.UserControls.RevisionGrid.Graph
 
         public RevisionGraphRevision GetNodeForRow(int row)
         {
-            if (_orderedNodesCache == null || row >= _orderedNodesCache.Count)
+            // Use a local variable, because the cached list can be reset
+            var localOrderedNodesCache = _orderedNodesCache;
+            if (localOrderedNodesCache == null || row >= localOrderedNodesCache.Count)
             {
                 return null;
             }
 
-            return _orderedNodesCache.ElementAt(row);
+            return localOrderedNodesCache.ElementAt(row);
         }
 
         public RevisionGraphRow GetSegmentsForRow(int row)
         {
-            if (_orderedRowCache == null || row >= _orderedRowCache.Count)
+            // Use a local variable, because the cached list can be reset
+            var localOrderedRowCache = _orderedRowCache;
+            if (localOrderedRowCache == null || row >= localOrderedRowCache.Count)
             {
                 return null;
             }
 
-            return _orderedRowCache[row];
+            return localOrderedRowCache[row];
         }
 
         public void HighlightBranch(ObjectId id)
