@@ -275,16 +275,18 @@ namespace GitUI.UserControls.RevisionGrid.Graph
 
         private void BuildOrderedNodesCache(int currentRowIndex)
         {
-            if (_orderedNodesCache == null || _reorder || _orderedNodesCache.Count < currentRowIndex)
+            if (_orderedNodesCache != null && !_reorder && _orderedNodesCache.Count >= currentRowIndex)
             {
-                _orderedNodesCache = _nodes.OrderBy(n => n.Score).ToList();
-                if (_orderedNodesCache.Count > 0)
-                {
-                    _orderedUntilScore = _orderedNodesCache.Last().Score;
-                }
-
-                _reorder = false;
+                return;
             }
+
+            _orderedNodesCache = _nodes.OrderBy(n => n.Score).ToList();
+            if (_orderedNodesCache.Count > 0)
+            {
+                _orderedUntilScore = _orderedNodesCache.Last().Score;
+            }
+
+            _reorder = false;
         }
 
         private void MarkCacheAsInvalidIfNeeded(RevisionGraphRevision revisionGraphRevision)
