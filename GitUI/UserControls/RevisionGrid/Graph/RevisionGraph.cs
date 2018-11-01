@@ -74,17 +74,13 @@ namespace GitUI.UserControls.RevisionGrid.Graph
         /// </param>
         public void CacheTo(int currentRowIndex, int lastToCacheRowIndex)
         {
-            if (_orderedNodesCache == null || _reorder || _orderedNodesCache.Count < currentRowIndex)
-            {
-                _orderedNodesCache = _nodes.OrderBy(n => n.Score).ToList();
-                if (_orderedNodesCache.Count > 0)
-                {
-                    _orderedUntilScore = _orderedNodesCache.Last().Score;
-                }
+            BuildOrderedNodesCache(currentRowIndex);
 
-                _reorder = false;
-            }
+            BuildOrderedRowCache(currentRowIndex, lastToCacheRowIndex);
+        }
 
+        private void BuildOrderedRowCache(int currentRowIndex, int lastToCacheRowIndex)
+        {
             if (_orderedRowCache == null || _rebuild)
             {
                 _orderedRowCache = new List<RevisionGraphRow>(currentRowIndex);
@@ -148,6 +144,20 @@ namespace GitUI.UserControls.RevisionGrid.Graph
             Updated?.Invoke();
         }
 
+        private void BuildOrderedNodesCache(int currentRowIndex)
+        {
+            if (_orderedNodesCache == null || _reorder || _orderedNodesCache.Count < currentRowIndex)
+            {
+                _orderedNodesCache = _nodes.OrderBy(n => n.Score).ToList();
+                if (_orderedNodesCache.Count > 0)
+                {
+                    _orderedUntilScore = _orderedNodesCache.Last().Score;
+                }
+
+                _reorder = false;
+            }
+        }
+
         public bool IsRowRelative(int row)
         {
             var node = GetNodeForRow(row);
@@ -171,7 +181,7 @@ namespace GitUI.UserControls.RevisionGrid.Graph
 
         public bool TryGetRowIndex(ObjectId objectId, out int index)
         {
-            CacheTo(Count, 0);
+            BuildOrderedNodesCache(Count);
 
             if (!TryGetNode(objectId, out RevisionGraphRevision revision))
             {
