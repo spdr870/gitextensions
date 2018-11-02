@@ -224,7 +224,7 @@ namespace GitUI.UserControls.RevisionGrid.Graph
                 return;
             }
 
-            OrderedRowCacheBuilder.Rebuild(_orderedRowCache, currentRowIndex, lastToCacheRowIndex, nextIndex, _orderedNodesCache);
+            _buildUntilScore = OrderedRowCacheBuilder.Rebuild(_orderedRowCache, currentRowIndex, lastToCacheRowIndex, nextIndex, _orderedNodesCache);
 
             Updated?.Invoke();
         }
