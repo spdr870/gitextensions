@@ -15,6 +15,9 @@ namespace GitUI.UserControls.RevisionGrid.Graph
         private ConcurrentDictionary<ObjectId, RevisionGraphRevision> _nodeByObjectId = new ConcurrentDictionary<ObjectId, RevisionGraphRevision>();
         private ConcurrentBag<RevisionGraphRevision> _nodes = new ConcurrentBag<RevisionGraphRevision>();
 
+        // Keep a seperate count. The count of ConcurrentBag is expensive.
+        private int _count = 0;
+
         /// <summary>
         /// The max score is used to keep a chronological order during the graph building.
         /// It is cheaper than doing <c>_nodes.Max(n => n.Score)</c>.
@@ -43,6 +46,7 @@ namespace GitUI.UserControls.RevisionGrid.Graph
 
         public void Clear()
         {
+            _count = 0;
             _maxScore = 0;
             _nodeByObjectId = new ConcurrentDictionary<ObjectId, RevisionGraphRevision>();
             _nodes = new ConcurrentBag<RevisionGraphRevision>();
@@ -50,7 +54,7 @@ namespace GitUI.UserControls.RevisionGrid.Graph
             _orderedRowCache = null;
         }
 
-        public int Count => _nodes.Count;
+        public int Count => _count;
 
         public int GetCachedCount()
         {
@@ -177,6 +181,7 @@ namespace GitUI.UserControls.RevisionGrid.Graph
             revisionGraphRevision.GitRevision = revision;
             revisionGraphRevision.ApplyFlags(types);
             _nodes.Add(revisionGraphRevision);
+            _count++;
 
             // No build the revisions parent/child structure. The parents need to added here. The child structure is kept in synch in
             // the RevisionGraphRevision class.
