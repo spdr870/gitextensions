@@ -16,10 +16,10 @@ namespace GitUI.UserControls.RevisionGrid.Columns
 {
     internal sealed class RevisionGraphColumnProvider : ColumnProvider
     {
-        private const int MaxLanes = 40;
+        private const int MaxLanes = 42;
 
         private static readonly int LaneLineWidth = DpiUtil.Scale(2);
-        private static readonly int LaneWidth = DpiUtil.Scale(16);
+        private static readonly int LaneWidth = DpiUtil.Scale(14);
         private static readonly int NodeDimension = DpiUtil.Scale(10);
 
         private readonly LaneInfoProvider _laneInfoProvider;
@@ -291,19 +291,49 @@ namespace GitUI.UserControls.RevisionGrid.Columns
 
                             if (startLane >= 0 && endLane >= 0)
                             {
-                                DrawSegment(g, brush, startX, startY, centerX, centerY, endX, endY);
+                                if (Math.Abs(startLane - centerLane) > 1 || Math.Abs(endLane - centerLane) > 1)
+                                {
+                                    if (Math.Abs(startLane - centerLane) > Math.Abs(endLane - centerLane))
+                                    {
+                                        DrawSegmentSpanMultipleLanes(g, brush, startX, startY, centerX, centerY);
+                                        DrawSegment(g, brush, centerX, centerY, endX, endY);
+                                    }
+                                    else
+                                    {
+                                        DrawSegmentSpanMultipleLanes(g, brush, centerX, centerY, endX, endY);
+                                        DrawSegment(g, brush, startX, startY, centerX, centerY);
+                                    }
+                                }
+                                else
+                                {
+                                    DrawSegment(g, brush, startX, startY, centerX, centerY, endX, endY);
+                                }
                             }
                             else
                             if (startLane >= 0 && centerLane >= 0 && (startLane <= MaxLanes || centerLane <= MaxLanes))
                             {
-                                // EndLane
-                                DrawSegment(g, brush, startX, startY, centerX, centerY);
+                                if (Math.Abs(startLane - centerLane) > 1)
+                                {
+                                    DrawSegmentSpanMultipleLanes(g, brush, startX, startY, centerX, centerY);
+                                }
+                                else
+                                {
+                                    // EndLane
+                                    DrawSegment(g, brush, startX, startY, centerX, centerY);
+                                }
                             }
                             else
                             if (endLane >= 0 && centerLane >= 0 && (endLane <= MaxLanes || centerLane <= MaxLanes))
                             {
-                                // StartLane
-                                DrawSegment(g, brush, centerX, centerY, endX, endY);
+                                if (Math.Abs(endLane - centerLane) > 1)
+                                {
+                                    DrawSegmentSpanMultipleLanes(g, brush, centerX, centerY, endX, endY);
+                                }
+                                else
+                                {
+                                    // StartLane
+                                    DrawSegment(g, brush, centerX, centerY, endX, endY);
+                                }
                             }
                         }
 
@@ -403,6 +433,7 @@ namespace GitUI.UserControls.RevisionGrid.Columns
         private void DrawSegment(Graphics g, Brush laneBrush, int x0, int y0, int x1, int y1, int x2, int y2)
         {
             float uncurlyFactor = 7.5f;
+
             var p0 = new PointF(x0, y0); // Start
             var p1 = new PointF((x0 + (x1 * uncurlyFactor) + x2) / (uncurlyFactor + 2f), (y0 + (y1 * uncurlyFactor) + y2) / (uncurlyFactor + 2f)); // Center
             var p2 = new PointF(x2, y2); // End
@@ -414,6 +445,27 @@ namespace GitUI.UserControls.RevisionGrid.Columns
                 g.SmoothingMode = SmoothingMode.AntiAlias;
 
                 g.DrawCurve(lanePen, new PointF[] { p0, p1, p2 });
+            }
+        }
+
+        private void DrawSegmentSpanMultipleLanes(Graphics g, Brush laneBrush, int x0, int y0, int x1, int y1)
+        {
+            var p0 = new Point(x0, y0);
+            var p1 = new Point(x1, y1);
+
+            using (var lanePen = new Pen(laneBrush, LaneLineWidth))
+            {
+                // Anti-aliasing with bezier & PixelOffsetMode.HighQuality
+                // introduces an offset of ~1/8 px - compensate it.
+                g.SmoothingMode = SmoothingMode.AntiAlias;
+                const float offset = -1f / 8f;
+
+                var yMid = (y0 + y1) / 2f;
+                var c0 = new PointF(offset + p0.X, offset + yMid);
+                var c1 = new PointF(offset + p1.X, offset + yMid);
+                var e0 = new PointF(offset + p0.X, offset + p0.Y);
+                var e1 = new PointF(offset + p1.X, offset + p1.Y);
+                g.DrawBezier(lanePen, e0, c0, c1, e1);
             }
         }
 
@@ -466,7 +518,7 @@ namespace GitUI.UserControls.RevisionGrid.Columns
 
         private int CalculateGraphColumnWidth(in VisibleRowRange range, int currentWidth, int minimumWidth)
         {
-            const int lookAhead = 10;
+            const int lookAhead = 2;
             int laneCount = 0;
             for (int i = range.FromIndex - lookAhead; i < (range.FromIndex + range.Count); i++)
             {
