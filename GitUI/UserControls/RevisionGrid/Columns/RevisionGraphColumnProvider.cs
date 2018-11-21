@@ -286,11 +286,11 @@ namespace GitUI.UserControls.RevisionGrid.Columns
 
                             if (revisionGraphSegment.Parent.Children.Count > 1)
                             {
-                                brush = GetBrushForRevision(revisionGraphSegment.LaneInfo, revisionGraphSegment.Child.IsRelative);
+                                brush = GetBrushForLaneInfo(revisionGraphSegment.LaneInfo, revisionGraphSegment.Child.IsRelative);
                             }
                             else
                             {
-                                brush = GetBrushForRevision(revisionGraphSegment.LaneInfo, revisionGraphSegment.Child.IsRelative);
+                                brush = GetBrushForLaneInfo(revisionGraphSegment.LaneInfo, revisionGraphSegment.Child.IsRelative);
                             }
 
                             // EndLane
@@ -314,7 +314,7 @@ namespace GitUI.UserControls.RevisionGrid.Columns
                             var square = currentRow.Revision.HasRef;
                             var hasOutline = currentRow.Revision.IsCheckedOut;
 
-                            Brush brush = GetBrushForRevision(currentRowRevisionLaneInfo, currentRow.Revision.IsRelative);
+                            Brush brush = GetBrushForLaneInfo(currentRowRevisionLaneInfo, currentRow.Revision.IsRelative);
                             if (square)
                             {
                                 g.SmoothingMode = SmoothingMode.None;
@@ -359,10 +359,10 @@ namespace GitUI.UserControls.RevisionGrid.Columns
             }
         }
 
-        private Brush GetBrushForRevision(LaneInfo laneInfo, bool isRelative)
+        private Brush GetBrushForLaneInfo(LaneInfo laneInfo, bool isRelative)
         {
             Brush brush;
-            if (!isRelative && (_revisionGraphDrawStyleCache == RevisionGraphDrawStyleEnum.DrawNonRelativesGray || _revisionGraphDrawStyleCache == RevisionGraphDrawStyleEnum.HighlightSelected))
+            if (laneInfo == null || (!isRelative && (_revisionGraphDrawStyleCache == RevisionGraphDrawStyleEnum.DrawNonRelativesGray || _revisionGraphDrawStyleCache == RevisionGraphDrawStyleEnum.HighlightSelected)))
             {
                 brush = RevisionGraphLaneColor.NonRelativeBrush;
             }
