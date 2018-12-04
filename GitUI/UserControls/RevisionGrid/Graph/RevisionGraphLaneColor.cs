@@ -19,6 +19,11 @@ namespace GitUI.UserControls.RevisionGrid.Graph
             Color.FromArgb(241, 196, 15)
         };
 
+        public static int GetColorForLane(int seed)
+        {
+            return Math.Abs(seed) % PresetGraphBrushes.Count;
+        }
+
         public static Color NonRelativeColor { get; } = Color.LightGray;
 
         internal static Brush NonRelativeBrush { get; private set; }
@@ -37,7 +42,7 @@ namespace GitUI.UserControls.RevisionGrid.Graph
 
         public static Brush GetBrushForLane(int laneColor)
         {
-            return PresetGraphBrushes[Math.Abs(laneColor) % PresetGraphBrushes.Count];
+            return PresetGraphBrushes[laneColor];
         }
     }
 }

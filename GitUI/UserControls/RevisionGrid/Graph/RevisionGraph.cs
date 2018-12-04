@@ -260,7 +260,7 @@ namespace GitUI.UserControls.RevisionGrid.Graph
 
                     foreach (var startSegment in revision.StartSegments)
                     {
-                        startSegment.LaneInfo = new LaneInfo(startSegment.Parent);
+                        startSegment.LaneInfo = new LaneInfo(startSegment.Child, null);
                         startSegment.LaneInfo.IsMergeLane = startSegment.Parent.Children.Count > 1 && startSegment.Child.Parents.Count > 1;
                     }
                 }
@@ -300,7 +300,7 @@ namespace GitUI.UserControls.RevisionGrid.Graph
                                 {
                                     if (startSegment.LaneInfo == null)
                                     {
-                                        startSegment.LaneInfo = new LaneInfo(startSegment.Parent);
+                                        startSegment.LaneInfo = new LaneInfo(startSegment.Parent, segment.LaneInfo);
                                         startSegment.LaneInfo.IsMergeLane = startSegment.Parent.Children.Count > 1 && startSegment.Child.Parents.Count > 1;
                                     }
                                 }
@@ -316,7 +316,7 @@ namespace GitUI.UserControls.RevisionGrid.Graph
 
                         foreach (var startSegment in revision.StartSegments)
                         {
-                            startSegment.LaneInfo = new LaneInfo(startSegment.Parent);
+                            startSegment.LaneInfo = new LaneInfo(startSegment.Child, null);
                             startSegment.LaneInfo.IsMergeLane = startSegment.Parent.Children.Count > 1 && startSegment.Child.Parents.Count > 1;
                         }
                     }

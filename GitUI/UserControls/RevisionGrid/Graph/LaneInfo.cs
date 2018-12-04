@@ -11,9 +11,15 @@ namespace GitUI.UserControls.RevisionGrid.Graph
     {
         private static Random random = new Random();
 
-        public LaneInfo(RevisionGraphRevision startRevision)
+        public LaneInfo(RevisionGraphRevision startRevision, LaneInfo derivedFrom)
         {
-            Color = startRevision.Objectid.GetHashCode();
+            Color = RevisionGraphLaneColor.GetColorForLane(startRevision.Objectid.GetHashCode());
+
+            if (derivedFrom != null && Color == derivedFrom.Color)
+            {
+                Color = RevisionGraphLaneColor.GetColorForLane(startRevision.Objectid.GetHashCode() % 13);
+            }
+
             StartRevision = startRevision;
         }
 
