@@ -387,7 +387,7 @@ namespace GitUI.UserControls.RevisionGrid.Columns
 
                 int nextNextLane = GetLaneForRow(nextNextRow, revisionGraphSegment);
 
-                if (centerLane == nextNextLane)
+                if (nextNextLane > endLane && ((Math.Abs(nextNextLane - endLane) == 1) || (Math.Abs(centerLane - endLane) == 1)))
                 {
                     nextRow.MoveLaneRightToStraigten(revisionGraphSegment);
                     endLane++;
