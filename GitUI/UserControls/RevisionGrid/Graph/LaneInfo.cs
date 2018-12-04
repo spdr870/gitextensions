@@ -11,7 +11,7 @@ namespace GitUI.UserControls.RevisionGrid.Graph
     {
         private static Random random = new Random();
 
-        public LaneInfo(RevisionGraphRevision startRevision, LaneInfo derivedFrom)
+        public LaneInfo(RevisionGraphRevision startRevision, RevisionGraphRevision orderRevision, LaneInfo derivedFrom)
         {
             Color = RevisionGraphLaneColor.GetColorForLane(startRevision.Objectid.GetHashCode());
 
@@ -20,18 +20,34 @@ namespace GitUI.UserControls.RevisionGrid.Graph
                 Color = RevisionGraphLaneColor.GetColorForLane(startRevision.Objectid.GetHashCode() % 13);
             }
 
+            IsNewLane = derivedFrom == null;
+
+            OrderRevision = orderRevision;
+
             StartRevision = startRevision;
         }
 
         public RevisionGraphRevision StartRevision { get; set; }
 
+        public RevisionGraphRevision OrderRevision { get; set; }
+
         public bool IsMergeLane { get; set; }
+
+        public bool IsNewLane { get; private set; }
 
         public int StartScore
         {
             get
             {
                 return StartRevision.Score;
+            }
+        }
+
+        public int OrderScore
+        {
+            get
+            {
+                return OrderRevision.Score;
             }
         }
 
