@@ -18,7 +18,7 @@ namespace GitUI.UserControls.RevisionGrid.Graph
     public class RevisionGraph : IRevisionGraphRowProvider
     {
         // Some unordered collections with raw data
-        private ConcurrentDictionary<ObjectId, RevisionGraphRevision> _nodeByObjectId = new ConcurrentDictionary<ObjectId, RevisionGraphRevision>();
+        private ImmutableDictionary<ObjectId, RevisionGraphRevision> _nodeByObjectId = ImmutableDictionary<ObjectId, RevisionGraphRevision>.Empty;
         private ImmutableList<RevisionGraphRevision> _nodes = ImmutableList<RevisionGraphRevision>.Empty;
 
         /// <summary>
@@ -48,7 +48,7 @@ namespace GitUI.UserControls.RevisionGrid.Graph
         public void Clear()
         {
             _maxScore = 0;
-            _nodeByObjectId = new ConcurrentDictionary<ObjectId, RevisionGraphRevision>();
+            _nodeByObjectId = ImmutableDictionary<ObjectId, RevisionGraphRevision>.Empty;
             _nodes = ImmutableList<RevisionGraphRevision>.Empty;
             _orderedNodesCache = null;
             _orderedRowCache = null;
@@ -168,7 +168,7 @@ namespace GitUI.UserControls.RevisionGrid.Graph
                 revisionGraphRevision = new RevisionGraphRevision(revision.ObjectId, ++_maxScore);
                 revisionGraphRevision.LaneColor = revisionGraphRevision.IsCheckedOut ? 0 : _maxScore;
 
-                _nodeByObjectId.TryAdd(revision.ObjectId, revisionGraphRevision);
+                ImmutableInterlocked.Update(ref _nodeByObjectId, list => list.Add(revision.ObjectId, revisionGraphRevision));
             }
             else
             {
@@ -192,7 +192,7 @@ namespace GitUI.UserControls.RevisionGrid.Graph
                         // This parent is not loaded before. Create a new (partial) revision. We will complete the info in the revision
                         // when this revision is loaded from the log.
                         parentRevisionGraphRevision = new RevisionGraphRevision(parentObjectId, ++_maxScore);
-                        _nodeByObjectId.TryAdd(parentObjectId, parentRevisionGraphRevision);
+                        ImmutableInterlocked.Update(ref _nodeByObjectId, list => list.Add(parentObjectId, parentRevisionGraphRevision));
                     }
                     else
                     {
